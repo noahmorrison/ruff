@@ -43,12 +43,36 @@ int fsize(const char *filename)
 }
 
 
-int main()
+void print_usage(char *binary)
 {
-    char md5[32];
-    get_md5("test", md5);
+    printf("Usage: %s reference_file\n", binary);
+}
 
-    int size = fsize("test");
+
+int main(int argc, char **argv)
+{
+    char *filename;
+
+    /* parse arguments */
+    if (argc != 2)
+    {
+        print_usage(argv[0]);
+        return 1;
+    }
+
+    filename = argv[1];
+
+    if (filename == NULL)
+    {
+        fprintf(stderr, "No reference file given\n");
+        return 1;
+    }
+
+    /* print md5sum and file size */
+    char md5[32];
+    get_md5(filename, md5);
+
+    int size = fsize(filename);
 
     printf("%s - %d\n", md5, size);
 
