@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <openssl/md5.h>
 #include <sys/stat.h>
+#include <dirent.h>
+#include <string.h>
 
 
 void get_md5(const char *filename, char str[])
@@ -45,13 +47,14 @@ int fsize(const char *filename)
 
 void print_usage(char *binary)
 {
-    printf("Usage: %s reference_file\n", binary);
+    printf("Usage: %s reference\n", binary);
 }
 
 
 int main(int argc, char **argv)
 {
-    char *filename;
+    char *reference;
+    DIR *rd;
 
     /* parse arguments */
     if (argc != 2)
@@ -60,21 +63,39 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    filename = argv[1];
+    reference = argv[1];
 
-    if (filename == NULL)
+    if (reference == NULL)
     {
-        fprintf(stderr, "No reference file given\n");
+        fprintf(stderr, "No reference given\n");
         return 1;
     }
 
-    /* print md5sum and file size */
-    char md5[32];
-    get_md5(filename, md5);
+    rd = opendir(reference);
+    if (rd == NULL)
+    {
+        fprintf(stderr, "Could not open reference\n");
+        return 2;
+    }
 
-    int size = fsize(filename);
 
-    printf("%s - %d\n", md5, size);
+    struct dirent *file;
+    while ((file = readdir(rd)) != NULL)
+    {
+        char *name = file->d_name;
+        char *path = strcat(reference, name);
+
+        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            continue;
+
+        /* print md5sum and file size */
+        char md5[32];
+        get_md5(path, md5);
+
+        int size = fsize(path);
+
+        printf("%s: %s - %d\n", path, md5, size);
+    }
 
     return 0;
 }
