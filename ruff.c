@@ -4,6 +4,8 @@
 #include <dirent.h>
 #include <string.h>
 
+#include "hash.h"
+
 
 void get_md5(const char *filename, char str[])
 {
@@ -49,10 +51,43 @@ void print_usage(char *binary)
 }
 
 
+void map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
+{
+    DIR *dir;
+
+    dir = opendir(dir_path);
+
+    if (dir == NULL)
+    {
+        fprintf(stderr, "Could not open %s as a directory", dir_path);
+        return;
+    }
+
+    struct dirent *file;
+    while ((file = readdir(dir)) != NULL)
+    {
+        char *name = file->d_name;
+        char path[PATH_MAX];
+        path[0] = '\0';
+
+        strcat(path, dir_path);
+        strcat(path, name);
+
+        printf("path is %s\n   dir_path is %s\n\n", path, dir_path);
+
+        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+            continue;
+
+        char result[NAME_MAX];
+        func(path, result);
+        ht_insert(results, result, path);
+    }
+}
+
+
 int main(int argc, char **argv)
 {
     char *reference;
-    DIR *rd;
 
     /* parse arguments */
     if (argc != 2)
@@ -69,31 +104,12 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    rd = opendir(reference);
-    if (rd == NULL)
-    {
-        fprintf(stderr, "Could not open reference\n");
-        return 2;
-    }
 
+    hash_table *sizes = create_hash_table(1024);
+    map_dir(sizes, get_size, reference);
 
-    struct dirent *file;
-    while ((file = readdir(rd)) != NULL)
-    {
-        char *name = file->d_name;
-        char *path = strcat(reference, name);
-
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
-
-        /* print md5sum and file size */
-        char md5[32];
-        get_md5(path, md5);
-
-        int size = fsize(path);
-
-        printf("%s: %s - %d\n", path, md5, size);
-    }
+    hash_node *node = ht_lookup(sizes, "14");
+    printf("%s\n", node->val);
 
     return 0;
 }

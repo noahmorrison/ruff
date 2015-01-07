@@ -1,5 +1,5 @@
 BINARY ?= ruff
-SOURCE ?= ruff.c
+SOURCE ?= ruff.c hash.c
 OBJECTS ?= $(SOURCE:.c=.o)
 CFLAGS += -Wall -lcrypto
 INCLUDES +=
