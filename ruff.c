@@ -34,14 +34,12 @@ void get_md5(const char *filename, char str[])
 }
 
 
-int fsize(const char *filename)
+void get_size(const char *filename, char result[])
 {
     struct stat st;
 
     if (stat(filename, &st) == 0)
-        return st.st_size;
-
-    return -1;
+        sprintf(result, "%u", (unsigned int)st.st_size);
 }
 
 
