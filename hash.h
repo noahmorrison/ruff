@@ -1,7 +1,7 @@
 typedef struct _hash_node_
 {
-    const char *key;
-    const char *val;
+    char key[1024];
+    char val[1024];
     struct _hash_node_ *next;
 } hash_node;
 

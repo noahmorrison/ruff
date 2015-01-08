@@ -72,8 +72,8 @@ void ht_insert(hash_table *table, char *key, char *val)
     if (cur_node != NULL)
         return;
 
-    new_node->key = key;
-    new_node->val = val;
+    strcpy(new_node->key, key);
+    strcpy(new_node->val, val);
     new_node->next = table->data[hashval];
     table->data[hashval] = new_node;
 }
