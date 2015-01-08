@@ -73,8 +73,6 @@ void map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_
         strcat(path, dir_path);
         strcat(path, name);
 
-        printf("path is %s\n   dir_path is %s\n\n", path, dir_path);
-
         if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
             continue;
 
