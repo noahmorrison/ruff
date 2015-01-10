@@ -56,7 +56,7 @@ hash_node *ht_lookup(hash_table *table, char *key)
 }
 
 
-void ht_insert(hash_table *table, char *key, char *val)
+int ht_insert(hash_table *table, char *key, char *val)
 {
     hash_node *new_node;
     hash_node *cur_node;
@@ -65,15 +65,17 @@ void ht_insert(hash_table *table, char *key, char *val)
     hashval = (hash(key) % table->size);
 
     if ((new_node = malloc(sizeof(hash_node))) == NULL)
-        return;
+        return -1;
 
     cur_node = ht_lookup(table, key);
 
     if (cur_node != NULL)
-        return;
+        return 0;
 
     strcpy(new_node->key, key);
     strcpy(new_node->val, val);
     new_node->next = table->data[hashval];
     table->data[hashval] = new_node;
+
+    return 1;
 }
