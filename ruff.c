@@ -78,7 +78,11 @@ void map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_
 
         char result[NAME_MAX];
         func(path, result);
-        ht_insert(results, result, path);
+
+        if (ht_insert(results, result, path) != 1)
+        {
+            printf("collision at %s\n", path);
+        }
     }
 }
 
