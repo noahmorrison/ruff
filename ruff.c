@@ -6,7 +6,6 @@
 
 #include "hash.h"
 
-
 void get_md5(const char *filename, char str[])
 {
     /* open file */
@@ -47,7 +46,7 @@ void get_size(const char *filename, char result[])
 
 void print_usage(char *binary)
 {
-    printf("Usage: %s reference\n", binary);
+    printf("Usage: %s reference dup\n", binary);
 }
 
 
@@ -90,9 +89,10 @@ void map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_
 int main(int argc, char **argv)
 {
     char *reference;
+    char *dup;
 
     /* parse arguments */
-    if (argc != 2)
+    if (argc != 3)
     {
         print_usage(argv[0]);
         return 1;
@@ -100,18 +100,25 @@ int main(int argc, char **argv)
 
     reference = argv[1];
 
+    dup = argv[2];
+
     if (reference == NULL)
     {
         fprintf(stderr, "No reference given\n");
         return 1;
     }
 
+    if (dup == NULL)
+    {
+        fprintf(stderr, "No dup given\n");
+        return 1;
+    }
+
 
     hash_table *sizes = create_hash_table(1024);
-    map_dir(sizes, get_size, reference);
 
-    hash_node *node = ht_lookup(sizes, "14");
-    printf("%s\n", node->val);
+    map_dir(sizes, get_size, reference);
+    map_dir(sizes, get_size, dup);
 
     return 0;
 }
