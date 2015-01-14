@@ -1,10 +1,12 @@
-#include <stdio.h>
-#include <openssl/md5.h>
 #include <sys/stat.h>
+
 #include <dirent.h>
+#include <openssl/md5.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "hash.h"
+
 
 void get_md5(const char *filename, char str[])
 {
