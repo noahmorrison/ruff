@@ -15,7 +15,8 @@ void	map_dir(hash_table *, void(*)(const char *, char []), char *);
 int	    main(int, char **);
 
 
-void get_md5(const char *filename, char str[])
+void
+get_md5(const char *filename, char str[])
 {
     /* open file */
     FILE *fp;
@@ -44,7 +45,8 @@ void get_md5(const char *filename, char str[])
 }
 
 
-void get_size(const char *filename, char result[])
+void
+get_size(const char *filename, char result[])
 {
     struct stat st;
 
@@ -53,13 +55,15 @@ void get_size(const char *filename, char result[])
 }
 
 
-void print_usage(char *binary)
+void
+print_usage(char *binary)
 {
     printf("Usage: %s reference dup\n", binary);
 }
 
 
-void map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
+void
+map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 {
     DIR *dir;
 
@@ -95,7 +99,8 @@ void map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_
 }
 
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
     char *reference;
     char *dup;

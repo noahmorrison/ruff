@@ -5,7 +5,8 @@
 #include "hash.h"
 
 
-unsigned long hash(char *s)
+unsigned long
+hash(char *s)
 {
     char *p;
     unsigned int h, g;
@@ -21,7 +22,8 @@ unsigned long hash(char *s)
 }
 
 
-hash_table *create_hash_table(int size)
+hash_table *
+create_hash_table(int size)
 {
     hash_table *table;
 
@@ -44,7 +46,8 @@ hash_table *create_hash_table(int size)
 }
 
 
-hash_node *ht_lookup(hash_table *table, char *key)
+hash_node *
+ht_lookup(hash_table *table, char *key)
 {
     hash_node *node;
     unsigned int hashval = (hash(key) % table->size);
@@ -57,7 +60,8 @@ hash_node *ht_lookup(hash_table *table, char *key)
 }
 
 
-int ht_insert(hash_table *table, char *key, char *val)
+int
+ht_insert(hash_table *table, char *key, char *val)
 {
     hash_node *new_node;
     hash_node *cur_node;
