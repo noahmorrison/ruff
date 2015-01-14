@@ -24,9 +24,7 @@ get_md5(const char *filename, char str[])
 	fp = fopen(filename, "r");
 
 	if (fp == NULL)
-	{
 		fprintf(stderr, "File does not exist: %s", filename);
-	}
 
 	/* generate md5sum*/
 	unsigned char data[1024];
@@ -69,15 +67,13 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 
 	dir = opendir(dir_path);
 
-	if (dir == NULL)
-	{
+	if (dir == NULL) {
 		fprintf(stderr, "Could not open %s as a directory", dir_path);
 		return;
 	}
 
 	struct dirent *file;
-	while ((file = readdir(dir)) != NULL)
-	{
+	while ((file = readdir(dir)) != NULL) {
 		char result[NAME_MAX];
 		char path[PATH_MAX];
 		char *name;
@@ -89,14 +85,12 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 		strcat(path, name);
 
 		if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-		continue;
+			continue;
 
 		func(path, result);
 
 		if (ht_insert(results, result, path) != 1)
-		{
 			printf("collision at %s\n", path);
-		}
 	}
 }
 
@@ -108,8 +102,7 @@ main(int argc, char **argv)
 	char *dup;
 
 	/* parse arguments */
-	if (argc != 3)
-	{
+	if (argc != 3) {
 		print_usage(argv[0]);
 		return 1;
 	}
@@ -118,14 +111,12 @@ main(int argc, char **argv)
 
 	dup = argv[2];
 
-	if (reference == NULL)
-	{
+	if (reference == NULL) {
 		fprintf(stderr, "No reference given\n");
 		return 1;
 	}
 
-	if (dup == NULL)
-	{
+	if (dup == NULL) {
 		fprintf(stderr, "No dup given\n");
 		return 1;
 	}

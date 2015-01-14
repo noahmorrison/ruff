@@ -12,7 +12,7 @@ hash(char *s)
 	unsigned int h, g;
 
 	h = 0;
-	for(p=s; *p!='\0'; p++){
+	for(p=s; *p!='\0'; p++) {
 		h = (h<<4) + *p;
 		if ((g = h) & 0xF0000000) {
 			h ^= g>>24;
@@ -40,7 +40,8 @@ create_hash_table(int size)
 
 	for (i = 0; i < size; i++)
 		table->data[i] = NULL;
-		table->size = size;
+
+	table->size = size;
 
 	return table;
 }
