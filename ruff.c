@@ -18,123 +18,123 @@ int	    main(int, char **);
 void
 get_md5(const char *filename, char str[])
 {
-    /* open file */
-    FILE *fp;
+	/* open file */
+	FILE *fp;
 
-    fp = fopen(filename, "r");
+	fp = fopen(filename, "r");
 
-    if (fp == NULL)
-    {
-        fprintf(stderr, "File does not exist: %s", filename);
-    }
+	if (fp == NULL)
+	{
+		fprintf(stderr, "File does not exist: %s", filename);
+	}
 
-    /* generate md5sum*/
-    unsigned char data[1024];
-    MD5_CTX ctx;
-    ssize_t bytes;
+	/* generate md5sum*/
+	unsigned char data[1024];
+	MD5_CTX ctx;
+	ssize_t bytes;
 
-    MD5_Init(&ctx);
-    while ((bytes = fread(data, 1, 1024, fp)) != 0)
-        MD5_Update(&ctx, data, bytes);
-    MD5_Final(data, &ctx);
+	MD5_Init(&ctx);
+	while ((bytes = fread(data, 1, 1024, fp)) != 0)
+		MD5_Update(&ctx, data, bytes);
+	MD5_Final(data, &ctx);
 
-    /* convert to hex string */
-    int i;
-    for (i = 0; i < MD5_DIGEST_LENGTH; i++)
-        sprintf(&str[i * 2], "%02x", data[i]);
+	/* convert to hex string */
+	int i;
+	for (i = 0; i < MD5_DIGEST_LENGTH; i++)
+		sprintf(&str[i * 2], "%02x", data[i]);
 }
 
 
 void
 get_size(const char *filename, char result[])
 {
-    struct stat st;
+	struct stat st;
 
-    if (stat(filename, &st) == 0)
-        sprintf(result, "%u", (unsigned int)st.st_size);
+	if (stat(filename, &st) == 0)
+		sprintf(result, "%u", (unsigned int)st.st_size);
 }
 
 
 void
 print_usage(char *binary)
 {
-    printf("Usage: %s reference dup\n", binary);
+	printf("Usage: %s reference dup\n", binary);
 }
 
 
 void
 map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 {
-    DIR *dir;
+	DIR *dir;
 
-    dir = opendir(dir_path);
+	dir = opendir(dir_path);
 
-    if (dir == NULL)
-    {
-        fprintf(stderr, "Could not open %s as a directory", dir_path);
-        return;
-    }
+	if (dir == NULL)
+	{
+		fprintf(stderr, "Could not open %s as a directory", dir_path);
+		return;
+	}
 
-    struct dirent *file;
-    while ((file = readdir(dir)) != NULL)
-    {
-        char result[NAME_MAX];
-        char path[PATH_MAX];
-        char *name;
+	struct dirent *file;
+	while ((file = readdir(dir)) != NULL)
+	{
+		char result[NAME_MAX];
+		char path[PATH_MAX];
+		char *name;
 
-        name = file->d_name;
-        path[0] = '\0';
+		name = file->d_name;
+		path[0] = '\0';
 
-        strcat(path, dir_path);
-        strcat(path, name);
+		strcat(path, dir_path);
+		strcat(path, name);
 
-        if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
-            continue;
+		if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
+		continue;
 
-        func(path, result);
+		func(path, result);
 
-        if (ht_insert(results, result, path) != 1)
-        {
-            printf("collision at %s\n", path);
-        }
-    }
+		if (ht_insert(results, result, path) != 1)
+		{
+			printf("collision at %s\n", path);
+		}
+	}
 }
 
 
 int
 main(int argc, char **argv)
 {
-    char *reference;
-    char *dup;
+	char *reference;
+	char *dup;
 
-    /* parse arguments */
-    if (argc != 3)
-    {
-        print_usage(argv[0]);
-        return 1;
-    }
+	/* parse arguments */
+	if (argc != 3)
+	{
+		print_usage(argv[0]);
+		return 1;
+	}
 
-    reference = argv[1];
+	reference = argv[1];
 
-    dup = argv[2];
+	dup = argv[2];
 
-    if (reference == NULL)
-    {
-        fprintf(stderr, "No reference given\n");
-        return 1;
-    }
+	if (reference == NULL)
+	{
+		fprintf(stderr, "No reference given\n");
+		return 1;
+	}
 
-    if (dup == NULL)
-    {
-        fprintf(stderr, "No dup given\n");
-        return 1;
-    }
+	if (dup == NULL)
+	{
+		fprintf(stderr, "No dup given\n");
+		return 1;
+	}
 
 
-    hash_table *sizes = create_hash_table(1024);
+	hash_table *sizes = create_hash_table(1024);
 
-    map_dir(sizes, get_size, reference);
-    map_dir(sizes, get_size, dup);
+	map_dir(sizes, get_size, reference);
+	map_dir(sizes, get_size, dup);
 
-    return 0;
+	return 0;
 }
