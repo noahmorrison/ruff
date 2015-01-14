@@ -29,9 +29,9 @@ get_md5(const char *filename, char str[])
     }
 
     /* generate md5sum*/
+    unsigned char data[1024];
     MD5_CTX ctx;
     ssize_t bytes;
-    unsigned char data[1024];
 
     MD5_Init(&ctx);
     while ((bytes = fread(data, 1, 1024, fp)) != 0)
@@ -78,8 +78,11 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
     struct dirent *file;
     while ((file = readdir(dir)) != NULL)
     {
-        char *name = file->d_name;
+        char result[NAME_MAX];
         char path[PATH_MAX];
+        char *name;
+
+        name = file->d_name;
         path[0] = '\0';
 
         strcat(path, dir_path);
@@ -88,7 +91,6 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
         if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
             continue;
 
-        char result[NAME_MAX];
         func(path, result);
 
         if (ht_insert(results, result, path) != 1)

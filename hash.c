@@ -10,6 +10,7 @@ hash(char *s)
 {
     char *p;
     unsigned int h, g;
+
     h = 0;
     for(p=s; *p!='\0'; p++){
         h = (h<<4) + *p;
@@ -26,6 +27,7 @@ hash_table *
 create_hash_table(int size)
 {
     hash_table *table;
+    int i;
 
     if (size < 1)
         return NULL;
@@ -36,7 +38,6 @@ create_hash_table(int size)
     if ((table->data = malloc(sizeof(hash_node *) *size)) == NULL)
         return NULL;
 
-    int i;
     for (i = 0; i < size; i++)
         table->data[i] = NULL;
 
@@ -49,8 +50,10 @@ create_hash_table(int size)
 hash_node *
 ht_lookup(hash_table *table, char *key)
 {
+    unsigned int hashval;
     hash_node *node;
-    unsigned int hashval = (hash(key) % table->size);
+
+    hashval = (hash(key) % table->size);
 
     for (node = table->data[hashval]; node != NULL; node = node->next)
         if (strcmp(key, node->key) == 0)
@@ -63,9 +66,9 @@ ht_lookup(hash_table *table, char *key)
 int
 ht_insert(hash_table *table, char *key, char *val)
 {
-    hash_node *new_node;
-    hash_node *cur_node;
     unsigned int hashval;
+    hash_node *cur_node;
+    hash_node *new_node;
 
     hashval = (hash(key) % table->size);
 
