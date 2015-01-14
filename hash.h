@@ -13,13 +13,7 @@ typedef struct _hash_table_
 } hash_table;
 
 
-unsigned long hash(char *string);
-
-
-hash_table *create_hash_table(int size);
-
-
-int ht_insert(hash_table *table, char *key, char *val);
-
-
-hash_node *ht_lookup(hash_table *table, char *key);
+unsigned long	hash(char *);
+hash_table	*create_hash_table(int);
+int	        ht_insert(hash_table *, char *, char *);
+hash_node	*ht_lookup(hash_table *, char *);
