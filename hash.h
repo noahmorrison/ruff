@@ -1,15 +1,13 @@
-typedef struct _hash_node_
-{
-    char key[1024];
-    char val[1024];
-    struct _hash_node_ *next;
+typedef struct _hash_node_ {
+    struct _hash_node_	*next;
+    char	        key[1024];
+    char	        val[1024];
 } hash_node;
 
 
-typedef struct _hash_table_
-{
-    int size;
-    hash_node **data;
+typedef struct _hash_table_ {
+    hash_node	**data;
+    int	        size;
 } hash_table;
 
 
