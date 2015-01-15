@@ -1,6 +1,7 @@
 #include <sys/stat.h>
 
 #include <dirent.h>
+#include <getopt.h>
 #include <openssl/md5.h>
 #include <stdio.h>
 #include <string.h>
@@ -99,24 +100,26 @@ int
 main(int argc, char **argv)
 {
 	char *reference;
-	char *dup;
+	char *normal;
 
 	/* parse arguments */
-	if (argc != 3) {
-		print_usage(argv[0]);
-		return 1;
-	}
-
-	reference = argv[1];
-
-	dup = argv[2];
+	char ch;
+	while ((ch = getopt(argc, argv, "r:n:")) != -1)
+		switch (ch) {
+		case 'r':
+			reference = optarg;
+			break;
+		case 'n':
+			normal = optarg;
+			break;
+		}
 
 	if (reference == NULL) {
 		fprintf(stderr, "No reference given\n");
 		return 1;
 	}
 
-	if (dup == NULL) {
+	if (normal == NULL) {
 		fprintf(stderr, "No dup given\n");
 		return 1;
 	}
@@ -125,7 +128,7 @@ main(int argc, char **argv)
 	hash_table *sizes = create_hash_table(1024);
 
 	map_dir(sizes, get_size, reference);
-	map_dir(sizes, get_size, dup);
+	map_dir(sizes, get_size, normal);
 
 	return 0;
 }
