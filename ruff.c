@@ -12,7 +12,7 @@ void	get_md5(const char *, char []);
 void	get_size(const char*, char []);
 void	print_usage(char *);
 void	map_dir(hash_table *, void(*)(const char *, char []), char *);
-int	    main(int, char **);
+int	main(int, char **);
 
 
 void
