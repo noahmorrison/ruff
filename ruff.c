@@ -90,8 +90,10 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 
 		func(path, result);
 
-		if (ht_insert(results, result, path) != 1)
-			printf("collision at %s\n", path);
+		if (ht_insert(results, result, path) == 0)
+			printf("collision at %s: %s\n", path, result);
+		else
+			printf("inserted %s: %s\n", path, result);
 	}
 }
 
@@ -127,7 +129,9 @@ main(int argc, char **argv)
 
 	hash_table *sizes = create_hash_table(1024);
 
+	printf("checking size of files in %s\n", reference);
 	map_dir(sizes, get_size, reference);
+	printf("checking size of files in %s\n", normal);
 	map_dir(sizes, get_size, normal);
 
 	return 0;
