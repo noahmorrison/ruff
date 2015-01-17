@@ -75,18 +75,27 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 
 	struct dirent *file;
 	while ((file = readdir(dir)) != NULL) {
+		struct stat st;
 		char result[NAME_MAX];
 		char path[PATH_MAX];
 		char *name;
 
 		name = file->d_name;
 		path[0] = '\0';
-
-		strcat(path, dir_path);
-		strcat(path, name);
+		result[0] = '\0';
 
 		if (strcmp(name, ".") == 0 || strcmp(name, "..") == 0)
 			continue;
+
+		strcat(path, dir_path);
+		strcat(path, "/");
+		strcat(path, name);
+
+		stat(path, &st);
+		if (S_ISDIR(st.st_mode)) {
+			map_dir(results, func, path);
+			continue;
+		}
 
 		func(path, result);
 
