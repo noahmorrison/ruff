@@ -1,3 +1,5 @@
+#define MAX_DIR 16
+
 #include <sys/stat.h>
 
 #include <dirent.h>
@@ -110,39 +112,44 @@ map_dir(hash_table *results, void(*func)(const char *, char []), char *dir_path)
 int
 main(int argc, char **argv)
 {
-	char *reference;
-	char *normal;
+	char dir_paths[MAX_DIR][PATH_MAX];
+	int dir_modes[MAX_DIR];
+	int dir_count;
 
 	/* parse arguments */
 	char ch;
-	while ((ch = getopt(argc, argv, "r:n:")) != -1)
-		switch (ch) {
-		case 'r':
-			reference = optarg;
-			break;
-		case 'n':
-			normal = optarg;
-			break;
+	dir_count = 0;
+	while ((ch = getopt(argc, argv, "r:n:")) != -1) {
+		if (dir_count >= MAX_DIR) {
+			fprintf(stderr, "%d is too many directories (max: %d)\n", dir_count, MAX_DIR);
+			return 1;
 		}
 
-	if (reference == NULL) {
-		fprintf(stderr, "No reference given\n");
-		return 1;
+		switch (ch) {
+		case 'r':
+			strcpy(dir_paths[dir_count], optarg);
+			dir_modes[dir_count] = 0;
+			dir_count++;
+			break;
+		case 'n':
+			strcpy(dir_paths[dir_count], optarg);
+			dir_modes[dir_count] = 1;
+			dir_count++;
+			break;
+		}
 	}
-
-	if (normal == NULL) {
-		fprintf(stderr, "No dup given\n");
-		return 1;
-	}
-
 
 	hash_table *sizes = create_hash_table(1024);
 
-	printf("checking size of files in %s\n", reference);
-	map_dir(sizes, get_size, reference);
-
-	printf("\nchecking size of files in %s\n", normal);
-	map_dir(sizes, get_size, normal);
+	char *dir;
+	int mode;
+	int i;
+	for (i = 0; i < dir_count; i++) {
+		dir = dir_paths[i];
+		mode = dir_modes[i];
+		printf("dir (mode %d): %s\n", mode, dir);
+		map_dir(sizes, get_size, dir);
+	}
 
 	return 0;
 }
